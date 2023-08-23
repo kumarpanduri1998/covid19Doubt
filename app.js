@@ -2,7 +2,7 @@ const express = require("express");
 const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
 const path = require("path");
-const jwn = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 const dbPath = path.join(__dirname, "covid19IndiaPortal.db");
@@ -53,12 +53,12 @@ const authenticationToken = (request, response, next) => {
   }
   if (jwtToken === undefined) {
     response.status(401);
-    response.send("Invalid JWT token");
+    response.send("Invalid JWT Token");
   } else {
     jwt.verify(jwtToken, "MY_SECRET_TOKEN", async (error, payload) => {
       if (error) {
         response.status(401);
-        response.send("Invalid JWT token");
+        response.send("Invalid JWT Token");
       } else {
         next();
       }
@@ -123,7 +123,7 @@ app.post("/districts/", authenticationToken, async (request, response) => {
 app.get(
   "/districts/:districtId/",
   authenticationToken,
-  async (request, reesponse) => {
+  async (request, response) => {
     const { districtId } = request.params;
     const singleDistQuery = `SELECT * FROM district WHERE district_id=${districtId}`;
     const singleDist = await db.get(singleDistQuery);
@@ -155,7 +155,7 @@ app.put(
       cured,
       active,
       deaths,
-    } = response.body;
+    } = request.body;
     const { districtId } = request.params;
     const updateDistQuery = `UPDATE district
                                 SET district_name='${districtName}',state_id=${stateId},
